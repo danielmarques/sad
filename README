@@ -1,0 +1,12 @@
+PUC-Rio - Pontifícia Universidade Católica do Rio de Janeiro
+Projeto de programação 2014.1
+SAD - Sistema de avaliação de Performace
+Aluno: Daniel da Rosa Marques
+
+Descrição
+
+O aprendizado supervisionado é um segmento importante da área de aprendizado de máquina. O objetivo deste tipo de técnica é que o algoritmo aprenda uma tarefa a partir de uma lista de exemplos. Essa tarefa pode ser do tipo classificação ou regressão. A primeira consiste em inferir a classe de um registro. A segunda significa prever o valor de um número real.
+
+Existem diversas técnicas e algoritmos de aprendizado de máquina que podem ser utilizados para atingir um nível de acerto satisfatório. Entretanto, empregar essas práticas exige conhecimento e muitas vezes esforço de desenvolvimento. A utilização de valores de referência é uma prática comum para justificar e avaliar o aprendizado de máquina. É possível aplicar métodos simples para chegar a um valor de referência. Por exemplo, em uma tarefa de regressão podemos utilizar a média dos n últimos valores.
+
+Este projeto de programação consiste em um sistema de avaliação de desempenho de métodos. O sistema SAD deve receber como entrada um conjunto de dados e um conjunto de métodos simples. Ele aplicará os métodos aos dados e gerará estatísticas de acerto. Estas estatísticas podem revelar a pertinência da aplicação de técnicas de aprendizado de máquina. Se for o caso, estas também podem ser usadas como valores de referência para os resultados do aprendizado de máquina.
