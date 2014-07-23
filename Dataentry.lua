@@ -4,45 +4,78 @@
 ######################## Projeto de Programação 2014.1 #########################
 
 Autor: Daniel da Rosa Marques
-Data: 17/07/2014
-Arquivo: Dataentry.lua
-Título: Dataentry
-Descrição: Módulo de entrada de dados do sistema.
+Advisor: Eduardo Sany Laber
+Date: 07/17/2014
+File: Dataentry.lua
+Title: Dataentry
+Description: Module responseble for the data entry.
 
 ################################################################################
 --]]
 
--- Carrega as instruções referentes aos experiments que serão executados.
--- experiments: arquivo de instruções fornecido pelo usuário
+local Saderrors = require "Saderrors"
+
+-- Loads the instructions file, that contains the description of the experiments.
+-- experiments: string with the path to the instructions file.
 local function LoadExperiments ( experiments )
 
-	-- Tabela onde serão armazenadas as instruções do arquivo
+	if type(experiments) ~= "string" then error(Saderrors.messages["INV_ARG_SRT"]) end
+
+	-- Table into where the instructions will be loaded
 	local loadedExperiments = {}
 
-	-- Definição da função Entry para armazenar as instruções na tabela loadedExperiments.
-	-- Cada posição da tebela representa um experimento. Cada experimentos tem diversas tags.
+	-- Definition of the Entry function that is used ins the instructiuons file.
+	-- Each position of the table represents one experiment. Each experiment may have several tags.
 	function Entry (experiment) loadedExperiments[#loadedExperiments+1] = experiment end
 
-	-- Executa a função Entry multiplas vezes no arquivo "experiments", passado como parâmetro.
-	dofile(experiments)
+	-- Loads the instruction file into the loadedExperiments table
+
+	local ok, ret = pcall(loadfile, experiments)
+
+	if ok then
+
+		if ret ~= nil then ret() else error(Saderrors.messages["INV_INST"]) end
+
+	else
+
+		error(ret)
+
+	end
 
 	return loadedExperiments
 
 end
 
--- Carrega os dados que seo utilizados nos experimentos
--- dataset: arquivo de dados que foi definido no experimento (arquivo de instruções)
+-- Loads the data file to be used in an experiment
+-- dataset: data file defined to that experiment
 local function LoadData( dataset )
 
+	if type(dataset) ~= "string" then error(Saderrors.messages["INV_ARG_SRT"]) end
+
+	-- Table into where the data willbe loaded
 	local data = {}
 
+	-- Definition of the Entry function that is used in the data file
+	-- The data file contains only one colum with the real values for each instance
 	function Entry (instance)
 		y = {}
 		y.real = instance[1]
 		data[#data+1] = y
 	end
 
-	dofile(dataset)
+	-- Loads the instruction file into the loadedExperiments table
+
+	local ok, ret = pcall(loadfile, dataset)
+
+	if ok then
+
+		if ret ~= nil then ret() else error (Saderrors.messages["INV_DATA"]) end
+
+	else
+
+		error(ret)
+
+	end
 
 	return data
 

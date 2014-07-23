@@ -1,0 +1,5 @@
+Entry{
+	data = "<arquivo de dados 1>"
+	strategy = "<Estratégia de predição 1>"
+	options = "<Opções da estratégia de predição 1>"
+}

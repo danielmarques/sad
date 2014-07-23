@@ -4,35 +4,45 @@
 ######################## Projeto de Programação 2014.1 #########################
 
 Autor: Daniel da Rosa Marques
-Data: 17/07/2014
-Arquivo: sad.lua
-Título: sad
-Descrição: Módulo principal do sistema. Deve ser executado via linha de comando 
-pelo usuário.
+Advisor: Eduardo Sany Laber
+Date: 07/17/2014
+File: sad.lua
+Title: sad
+Description: Main module of the sistem. It must be executed via command line.
 
 ################################################################################
 --]]
+
+-- Modules
 local Dataentry = require "Dataentry"
+local Saderrors = require "Saderrors"
 
-print("SAD - Sistema de Avaliação de Desempenho")
-print("Projeto de Programação 2014.1")
-print("\nAluno: Daniel da Rosa Marques")
-print("Orientador: Eduardo Sany Laber\n\n")
+-- Variables
+local debug = true
 
-print("Insira o caminho para o arquivo de instruções:")
+-- Code
 
-instFilePath = io.read()
+print("SAD v 1.0, PUC-Rio\n")
 
-print("\nTentando ler o arquivo de instruções: " .. instFilePath .. "\n")
+print("Enter the path for the instructions file:")
 
-local experiments = Dataentry.LoadExperiments(instFilePath)
+local instFilePath = io.read()
 
-for experimentNum, experiment in pairs(experiments) do
-	print("\nExecutando o experimento número " .. experimentNum)
+print("\nTrying to read the instructions file: " .. instFilePath .. "\n")
 
-	--print(experiment.data)
+local ok, ret = pcall(Dataentry.LoadExperiments, instFilePath)
 
-	for tag, value in pairs(experiment) do
-		print(tag .. " = " .. value)
+if ok then
+	for experimentNum, experiment in pairs(ret) do
+		print("\nExecuting experiment number " .. experimentNum)
+
+		--print(experiment.data)
+
+		for tag, value in pairs(experiment) do
+			print(tag .. " = " .. value)
+		end
 	end
+else
+	print(Saderrors.messages["LOD_INS"])
+	if debug then print("Description: " .. ret) end
 end
