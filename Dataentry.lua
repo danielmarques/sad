@@ -81,9 +81,10 @@ local function LoadData( dataset )
 
 end
 
--- Retorna a tabela com os componentes do modulo Dataentry
+-- Returns the table with the module elements
 return {
 
 	LoadExperiments = LoadExperiments,
 	LoadData = LoadData,
+	
 }
