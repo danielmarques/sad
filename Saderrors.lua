@@ -17,10 +17,13 @@ local messages = {
 
 	LOD_INS = "Problem while loading instructions",
 	INV_ARG_SRT = "Invalid Arguments. String expected.",
+	INV_ARG_TAB = "Invalid Arguments. Table expected.",
 	EMP_INST = "Empty instructions file.",
 	INV_INST = "Invalid or non-existent instructions file.",
 	INV_DATA = "Invalid or non-existent data file.",
-	
+	INV_DATA_FOR = "Invalid data format. Correct format: data = {{real = <value 1>}, {real = <value 2>}, ... }",
+	INV_ARG_MEAN = "Invalid argument for a mean operation. Number expected."
+
 }
 
 return {
