@@ -16,11 +16,10 @@ Description: Unit tests for the data entry module.
 local Dataentry = require "Dataentry"
 local Saderrors = require "Saderrors"
 
-local instFilePath, dataFilePath
 
--- LOAD INSTRUCTIONS TESTS
 describe("> #Dataentry", function ()
 
+	-- LOAD INSTRUCTIONS TESTS
 	describe("> #LoadExperiments", function()
 
 		it("> Loads file instructions_001 and checks its content", function()
@@ -151,7 +150,7 @@ describe("> #Dataentry", function ()
 
 	end)
 
-	-- LOCAD DATA TESTS
+	-- LOAD DATA TESTS
 	describe("> #Loaddata", function() 
 
 		it("> Loads the file data_000 and checks its content", function()
@@ -309,6 +308,5 @@ describe("> #Dataentry", function ()
 			assert.has_error(function () Dataentry.LoadData("") end, Saderrors.messages["INV_DATA"])
 
 		end)
-
 	end)
 end)
