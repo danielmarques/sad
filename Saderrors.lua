@@ -22,6 +22,8 @@ local messages = {
 	INV_INST = "Invalid or non-existent instructions file.",
 	INV_DATA = "Invalid or non-existent data file.",
 	INV_DATA_FOR = "Invalid data format. Correct format: data = {{real = <value 1>}, {real = <value 2>}, ... }",
+	INV_DATA_FOR_STAT = "Invalid data format. Correct format: data = {{real = <value 1>, predicted = <value 2>}, {real = <value 3>, predicted = <value 4>}, ... }",
+	INV_DATA_FOR_STAT_NUM = "Invalid data format. Correct format: data = {{real = <Number 1>, predicted = <number 2>}, {real = <number 3>, predicted = <number 4>}, ... }",
 	INV_ARG_MEAN = "Invalid argument for a mean operation. Number expected."
 
 }

@@ -16,6 +16,7 @@ Description: Unit tests for all modules of the sistem.
 local Saderrors = require "Saderrors"
 local Dataentry = require "Dataentry"
 local Prediction = require "Prediction"
+local Statistics = require "Statistics"
 
 -- ################################################################################
 -- Unit tests for the data entry module.
@@ -667,6 +668,207 @@ describe("> #prediction", function()
 			a = {}
 			a[1] = 1; a[2] = 2; a[4] = 4; a[5] = 5
 			assert.False(Prediction.IsArray(a))
+
+		end)
+	end)
+end)
+
+-- ################################################################################
+-- Unit tests for the statistics module.
+describe("> #statistics", function()
+
+	--FUNCTION: CORRECTINESS
+	describe("> #correctness", function()
+
+		it("> Tests with a valid input.", function()
+
+			local data = {{real = 0.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 3}, {real = 4, predicted = 4}, {real = 5, predicted = 5},
+			{real = 6, predicted = 6}, {real = 7, predicted = 7}, {real = 8, predicted = 8}, {real = 9, predicted = 9}, {real = 10000, predicted = 10000},}
+
+			local c, i = Statistics.Correctness(data)
+
+			assert.True(c == 10)
+			assert.True(i == 0)
+
+			data = {{real = "0.1", predicted = "0.1"}, {real = "2", predicted = "2"}, {real = "3", predicted = "3"}, {real = "4", predicted = "4"}, {real = "5", predicted = "5"},
+			{real = "6", predicted = "6"}, {real = "7", predicted = "7"}, {real = "8", predicted = "8"}, {real = "9", predicted = "9"}, {real = "10000", predicted = "10000"},}
+
+			c, i = Statistics.Correctness(data)
+
+			assert.True(c == 10)
+			assert.True(i == 0)
+
+			data = {{real = "0.1", predicted = "0.1a"}, {real = "2", predicted = "2a"}, {real = "3a", predicted = "3"}, {real = "4a", predicted = "4"}, {real = "5", predicted = "5a"},
+			{real = "6", predicted = "6b"}, {real = "7", predicted = "7b"}, {real = "8b", predicted = "8"}, {real = "9b", predicted = "9"}, {real = "10000", predicted = "10000c"},}
+
+			c, i = Statistics.Correctness(data)
+
+			assert.True(c == 0)
+			assert.True(i == 10)
+
+			data = {{real = "0.1", predicted = "0.1"}, {real = "2", predicted = "2"}, {real = "3a", predicted = "3"}, {real = "4a", predicted = "4"}, {real = "5", predicted = "5a"},
+			{real = "6", predicted = "6"}, {real = "7", predicted = "7"}, {real = "8", predicted = "8"}, {real = "9b", predicted = "9"}, {real = "10000", predicted = "10000c"},}
+
+			c, i = Statistics.Correctness(data)
+
+			assert.True(c == 5)
+			assert.True(i == 5)
+
+		end)
+
+		it("> Tests the function Correctness with invalid arguments and throw the corresponding error", function() 
+
+			assert.has_error(function () Statistics.Correctness("invalid argument") end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Statistics.Correctness(1) end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Statistics.Correctness() end, Saderrors.messages["INV_ARG_TAB"])
+
+		end)
+
+		it ("> Tests the function Correctness with invalid data format and throw the corresponding error", function()
+
+			local data = {{key = 1},{key = 2},{key = 3},{key = 4},{key = 5},}
+			assert.has_error(function () Statistics.Correctness(data) end, Saderrors.messages["INV_DATA_FOR_STAT"])
+
+			local data = {1,2,3,4}
+			assert.has_error(function () Statistics.Correctness(data) end, Saderrors.messages["INV_DATA_FOR_STAT"])
+
+			local data = {{real = 1},{real = 2},{real = 3},{real = 4},{real = 5},}		
+			assert.has_error(function () Statistics.Correctness(data) end, Saderrors.messages["INV_DATA_FOR_STAT"])
+
+			local data = {{real = 1, predicted = 1},{real = 2, predicted = 1},{real = 3},{real = 4, predicted = 1},{real = 5, predicted = 1},}		
+			assert.has_error(function () Statistics.Correctness(data) end, Saderrors.messages["INV_DATA_FOR_STAT"])
+
+		end)
+	end)
+
+	--FUNCTION: MEAN ABSOLUTE ERROR
+	describe("> #meanabserror", function()
+
+		it("> Tests with a valid input.", function()
+
+			-- Test 1
+			local data = {{real = 0.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 3}, {real = 4, predicted = 4}, {real = 5, predicted = 5},
+			{real = 6, predicted = 6}, {real = 7, predicted = 7}, {real = 8, predicted = 8}, {real = 9, predicted = 9}, {real = 10000, predicted = 10000},}
+
+			local mae = Statistics.MeanAbsError(data)
+
+			assert.True(mae == 0)
+
+			-- Test 2
+			data = {{real = 1.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 3}, {real = 4, predicted = 4}, {real = 5, predicted = 5},
+			{real = 7, predicted = 6}, {real = 8, predicted = 7}, {real = 9, predicted = 8}, {real = 9, predicted = 9}, {real = 10000, predicted = 10000},}
+
+			mae = Statistics.MeanAbsError(data)
+
+			assert.True(mae == 0.4)
+
+			-- Test 3
+			data = {{real = 1.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 4}, {real = 4, predicted = 4.1}, {real = 5.1, predicted = 5},
+			{real = 7, predicted = 6}, {real = 8, predicted = 7}, {real = 9, predicted = 8}, {real = 9, predicted = 9}, {real = 10000, predicted = 10000},}
+
+			mae = Statistics.MeanAbsError(data)
+
+			assert.are.same(tostring(0.52), tostring(mae))
+
+			-- Test 4
+			data = {}
+
+			mae = Statistics.MeanAbsError(data)
+
+			assert.True(mae == 0)
+
+		end)
+
+		it("> Tests the function MeanAbsError with invalid arguments and throw the corresponding error", function() 
+
+			assert.has_error(function () Statistics.MeanAbsError("invalid argument") end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Statistics.MeanAbsError(1) end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Statistics.MeanAbsError() end, Saderrors.messages["INV_ARG_TAB"])
+
+		end)
+
+		it ("> Tests the function MeanAbsError with invalid data format and throw the corresponding error", function()
+
+			local data = {{key = 1},{key = 2},{key = 3},{key = 4},{key = 5},}
+			assert.has_error(function () Statistics.MeanAbsError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+			local data = {1,2,3,4}
+			assert.has_error(function () Statistics.MeanAbsError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+			local data = {{real = 1},{real = 2},{real = 3},{real = 4},{real = 5},}	
+			assert.has_error(function () Statistics.MeanAbsError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+			local data = {{real = 1, predicted = 1},{real = 2, predicted = 1},{real = 3},{real = 4, predicted = 1},{real = 5, predicted = 1},}		
+			assert.has_error(function () Statistics.MeanAbsError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+			local data = {{real = 1, predicted = 1},{real = 2, predicted = 1},{real = 3, predicted = "3"},{real = 4, predicted = 1},{real = 5, predicted = 1},}		
+			assert.has_error(function () Statistics.MeanAbsError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+		end)
+	end)
+
+	--FUNCTION: ROOT MEAN SQUARED ERROR
+	describe("> #rootmeansqrterror", function()
+
+		it("> Tests with a valid input.", function()
+
+			-- Test 1
+			local data = {{real = 0.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 3}, {real = 4, predicted = 4}, {real = 5, predicted = 5},
+			{real = 6, predicted = 6}, {real = 7, predicted = 7}, {real = 8, predicted = 8}, {real = 9, predicted = 9}, {real = 10000, predicted = 10000},}
+
+			local mae = Statistics.RootMeanSqrtError(data)
+
+			assert.True(mae == 0)
+
+			-- Test 2
+			data = {{real = 1.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 3}, {real = 4, predicted = 4}, {real = 5, predicted = 5},
+			{real = 7, predicted = 6}, {real = 8, predicted = 7}, {real = 9, predicted = 8}, {real = 9, predicted = 9}, {real = 10000, predicted = 10000},}
+
+			mae = Statistics.RootMeanSqrtError(data)
+
+			assert.True(tostring(mae) == tostring(math.sqrt(0.4)))
+
+			-- Test 3
+			data = {{real = 1.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 4}, {real = 4, predicted = 4.1}, {real = 5.1, predicted = 5},
+			{real = 7, predicted = 6}, {real = 8, predicted = 7}, {real = 9, predicted = 8}, {real = 9, predicted = 9}, {real = 10000, predicted = 10000},}
+
+			mae = Statistics.RootMeanSqrtError(data)
+
+			assert.are.same(tostring(math.sqrt(0.502)), tostring(mae))
+
+			-- Test 4
+			data = {}
+
+			mae = Statistics.RootMeanSqrtError(data)
+
+			assert.True(mae == 0)
+
+		end)
+
+		it("> Tests the function RootMeanSqrtError with invalid arguments and throw the corresponding error", function() 
+
+			assert.has_error(function () Statistics.RootMeanSqrtError("invalid argument") end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Statistics.RootMeanSqrtError(1) end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Statistics.RootMeanSqrtError() end, Saderrors.messages["INV_ARG_TAB"])
+
+		end)
+
+		it ("> Tests the function RootMeanSqrtError with invalid data format and throw the corresponding error", function()
+
+			local data = {{key = 1},{key = 2},{key = 3},{key = 4},{key = 5},}
+			assert.has_error(function () Statistics.RootMeanSqrtError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+			local data = {1,2,3,4}
+			assert.has_error(function () Statistics.RootMeanSqrtError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+			local data = {{real = 1},{real = 2},{real = 3},{real = 4},{real = 5},}	
+			assert.has_error(function () Statistics.RootMeanSqrtError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+			local data = {{real = 1, predicted = 1},{real = 2, predicted = 1},{real = 3},{real = 4, predicted = 1},{real = 5, predicted = 1},}		
+			assert.has_error(function () Statistics.RootMeanSqrtError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+			local data = {{real = 1, predicted = 1},{real = 2, predicted = 1},{real = 3, predicted = "3"},{real = 4, predicted = 1},{real = 5, predicted = 1},}		
+			assert.has_error(function () Statistics.RootMeanSqrtError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
 
 		end)
 	end)
