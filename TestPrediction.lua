@@ -270,6 +270,82 @@ describe("> #prediction", function()
 		end)
 	end)
 
+	-- STRATEGY: MORE NUMEROUS P
+	describe("> #morenumerousp", function()
+		it("> Tests the strategy MoreNumerousP with a valid input", function() 
+
+			local data = {{real = "a"},{real = "b"},{real = "b"},{real = "c"},{real = "d"},{real = "a"},{real = "b"},{real = "b"},
+			{real = "c"},{real = "d"},}
+
+			local newData = Prediction.MoreNumerousP(data, 4)			
+
+			for i = 1, #newData, 1 do
+
+				assert.are.same(data[i].real, newData[i].real)
+
+			end
+
+			assert.are.same(nil, newData[1].predicted)
+			assert.are.same("a", newData[2].predicted)
+			assert.True("a" == newData[3].predicted or "b" == newData[3].predicted)
+			assert.are.same("b", newData[4].predicted)
+			assert.are.same("b", newData[5].predicted)
+			assert.are.same("b", newData[6].predicted)
+			assert.True("a" == newData[7].predicted or "b" == newData[7].predicted or "c" == newData[7].predicted or "d" == newData[7].predicted)
+			assert.True("a" == newData[8].predicted or "b" == newData[8].predicted or "c" == newData[8].predicted or "d" == newData[8].predicted)
+			assert.are.same("b", newData[9].predicted)
+			assert.are.same("b", newData[10].predicted)
+
+		end)
+
+		it("> Tests the strategy MoreNumerousP with a valid input 2", function() 
+
+			local data = {{real = 1},{real = 1},{real = 2},{real = 2},{real = 3},{real = 3},{real = 4},{real = 4},
+			{real = {5}},{real = 5},}
+
+			local newData = Prediction.MoreNumerousP(data, 3)			
+
+			for i = 1, #newData, 1 do
+
+				assert.are.same(data[i].real, newData[i].real)
+
+			end
+
+			assert.are.same(nil, newData[1].predicted)
+			assert.are.same(1, newData[2].predicted)
+			assert.are.same(1, newData[3].predicted)
+			assert.are.same(1, newData[4].predicted)
+			assert.are.same(2, newData[5].predicted)
+			assert.are.same(2, newData[6].predicted)
+			assert.are.same(3, newData[7].predicted)
+			assert.are.same(3, newData[8].predicted)
+			assert.are.same(4, newData[9].predicted)
+			assert.are.same(4, newData[10].predicted)
+
+		end)
+
+		it("> Tests the strategy MoreNumerousP with invalid arguments and throw the corresponding error", function() 
+
+			assert.has_error(function () Prediction.MoreNumerousP("invalid argument") end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Prediction.MoreNumerousP(1) end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Prediction.MoreNumerousP() end, Saderrors.messages["INV_ARG_TAB"])
+
+		end)
+
+		it ("> Tests the strategy MoreNumerousP with invalid data format and throw the corresponding error", function()
+
+			local data = {{key = 1},{key = 2},{key = 3},{key = 4},{key = 5},}
+			assert.has_error(function () Prediction.MoreNumerousP(data) end, Saderrors.messages["INV_DATA_FOR"])
+
+			local data = {1,2,3,4}
+			assert.has_error(function () Prediction.MoreNumerousP(data) end, Saderrors.messages["INV_DATA_FOR"])
+
+			local data = {{real = 1},{real = 2},{real = 3},{4},{real = 5},}		
+			assert.has_error(function () Prediction.MoreNumerousP(data) end, Saderrors.messages["INV_DATA_FOR"])
+
+		end)
+	end)
+
 	-- OTHER
 	describe("> #other", function() 
 

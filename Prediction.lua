@@ -15,6 +15,8 @@ Description: Module responsable for the predictions made by the strategies.
 
 local Saderrors = require "Saderrors"
 
+-- Strategy that repeats the value os the preavious instance
+-- data: must be an array in the format {{real = <value 1>}, {real = <value 2>}, ... }
 local function RepeatPrevious( data )
 	
 	if not IsArray(data) then error(Saderrors.messages["INV_DATA_FOR"]) end
@@ -33,7 +35,9 @@ local function RepeatPrevious( data )
 	return data
 
 end
- 
+
+-- Strategy that uses the mean of the value of all instances as the prediction
+-- data: must be an table in the format {key1 = {real = <value 1>}, key2 = {real = <value 2>}, ... }
 local function MeanAll( data )
 
 	if type(data) ~= "table" then error(Saderrors.messages["INV_ARG_TAB"]) end
@@ -67,6 +71,9 @@ local function MeanAll( data )
 
 end
 
+-- Strategy that uses the mean of he value of the previous p instances as the prediction for the next instance
+-- data: must be an array in the format {{real = <value 1>}, {real = <value 2>}, ... }
+-- p: the number of previous instances to consider
 local function MeanP( data, p )
 
 	if not IsArray(data) then error(Saderrors.messages["INV_DATA_FOR"]) end
@@ -102,6 +109,8 @@ local function MeanP( data, p )
 
 end
 
+-- Strategy that uses the more numerous value among all instances as the prediction
+-- data: must be an table in the format {key1 = {real = <value 1>}, key2 = {real = <value 2>}, ... }
 local function MoreNumerousAll( data )
 
 	if type(data) ~= "table" then error(Saderrors.messages["INV_ARG_TAB"]) end
@@ -132,11 +141,61 @@ local function MoreNumerousAll( data )
 		data[k].predicted = max
 
 	end
-	
+
 	return data
 
 end
 
+-- Strategy that uses the more numerous value among the previous p instances as the prediction for the next instance
+-- data: must be an array in the format {{real = <value 1>}, {real = <value 2>}, ... }
+-- p: the number of previous instances to consider
+local function MoreNumerousP( data, p )
+
+	if not IsArray(data) then error(Saderrors.messages["INV_DATA_FOR"]) end
+
+	local previousTale, previousSize = 1, 0
+	local previousHist = {}
+
+	for i = 1, #data-1, 1 do
+
+		if (type(data[i]) == "table" and data[i].real ~= nil) then
+
+			if previousHist[data[i].real] then previousHist[data[i].real] = previousHist[data[i].real] + 1 
+			else previousHist[data[i].real] = 1 end
+
+			previousSize = previousSize + 1
+
+			--verificar o mais numeroso no historico
+			local max_count, max = 0, nil
+
+			for k, v in pairs(previousHist) do
+				
+				if v > max_count then max = k; max_count = v end
+
+			end
+
+			data[i+1].predicted = max
+
+			if previousSize == p then
+
+				previousHist[data[previousTale].real] = previousHist[data[previousTale].real] - 1
+				if previousHist[data[previousTale].real] == 0 then previousHist[data[previousTale].real] = nil end
+
+				previousTale = previousTale + 1
+				previousSize = previousSize - 1
+
+			end
+
+		else error (Saderrors.messages["INV_DATA_FOR"]) end
+
+	end
+
+	return data
+
+end
+
+-- Function that verifies if the table is an array, that is, has only sequential numeric keys
+-- t: is any table
 function IsArray( t )
 
     if type(t) ~= "table" then error(Saderrors.messages["INV_ARG_TAB"]) end
@@ -168,6 +227,7 @@ return {
 	MeanAll = MeanAll,
 	MeanP = MeanP,
 	MoreNumerousAll = MoreNumerousAll,
+	MoreNumerousP = MoreNumerousP,
 	IsArray = IsArray,
 
 }
