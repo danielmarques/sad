@@ -16,7 +16,7 @@ Description: Module responsable for the calculaion of statistics.
 local Saderrors = require "Saderrors"
 
 -- Function that counts the number of correct and incorrect instances
--- data: Must be an table of the form: data = {key1 = {real = <value x>, predicted = <value y>}, ...}
+-- data: Must be a table of the form: data = {key1 = {real = <value x>, predicted = <value y>}, ...}
 function Correctness( data )
 
 	if type(data) ~= "table" then error(Saderrors.messages["INV_ARG_TAB"]) end
@@ -38,7 +38,7 @@ function Correctness( data )
 end
 
 -- Function that calculates the mean absolute error for the group of all instances in data
--- data: Must be an table of the form: data = {key1 = {real = <number x>, predicted = <number y>}, ...}
+-- data: Must be a table of the form: data = {key1 = {real = <number x>, predicted = <number y>}, ...}
 function MeanAbsError( data )
 
 	if type(data) ~= "table" then error(Saderrors.messages["INV_ARG_TAB"]) end
@@ -61,7 +61,7 @@ function MeanAbsError( data )
 end
 
 -- Function that calculates the root mean squared error for the group of all instances in data
--- data: Must be an table of the form: data = {key1 = {real = <number x>, predicted = <number y>}, ...}
+-- data: Must be a table of the form: data = {key1 = {real = <number x>, predicted = <number y>}, ...}
 function RootMeanSqrtError( data )
 
 	if type(data) ~= "table" then error(Saderrors.messages["INV_ARG_TAB"]) end
