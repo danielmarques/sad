@@ -17,6 +17,7 @@ local Saderrors = require "Saderrors"
 local Dataentry = require "Dataentry"
 local Prediction = require "Prediction"
 local Statistics = require "Statistics"
+local Persistence = require "Persistence"
 
 -- ################################################################################
 -- Unit tests for the data entry module.
@@ -869,6 +870,108 @@ describe("> #statistics", function()
 
 			local data = {{real = 1, predicted = 1},{real = 2, predicted = 1},{real = 3, predicted = "3"},{real = 4, predicted = 1},{real = 5, predicted = 1},}		
 			assert.has_error(function () Statistics.RootMeanSqrtError(data) end, Saderrors.messages["INV_DATA_FOR_STAT_NUM"])
+
+		end)
+	end)
+end)
+
+describe("> #persistence", function()
+
+	-- SAVE STRING
+	describe("> #savestring", function()
+
+		it("> Saves a string into a file and checks the content.", function()
+
+			-- Test 1
+			local srt = "A short string."
+			local fileName = "sad_test_file"
+			Persistence.SaveString(srt, fileName)
+			local f = io.open(fileName, "r")
+			local retSrt = f:read("*a")
+			f:close()
+
+			assert.are.same(srt, retSrt)
+
+			-- Test 2
+			srt = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,"
+			Persistence.SaveString(srt, fileName)
+			f = io.open(fileName, "r")
+			retSrt = f:read("*a")
+			f:close()
+
+			assert.are.same(srt, retSrt)
+
+			-- Test 3
+			srt = "100000.0000001"
+			Persistence.SaveString(srt, fileName)
+			f = io.open(fileName, "r")
+			retSrt = f:read("*a")
+			f:close()
+
+			assert.are.same(srt, retSrt)
+
+			os.remove(fileName)
+
+		end)
+
+		it("> Tests the function SaveString with invalid arguments and throw the corresponding error", function() 
+
+			assert.has_error(function () Persistence.SaveString("valid argument", 1) end, Saderrors.messages["INV_ARG_SRT"])
+			assert.has_error(function () Persistence.SaveString(1, "valid argument") end, Saderrors.messages["INV_ARG_SRT"])
+			assert.has_error(function () Persistence.SaveString() end, Saderrors.messages["INV_ARG_SRT"])
+			assert.has_error(function () Persistence.SaveString("valid argument", {}) end, Saderrors.messages["INV_ARG_SRT"])
+
+		end)
+	end)
+
+	-- SAVE DATA
+	describe("> #savedata", function()
+
+		it("> Saves a table data into a file and checks the content.", function()
+
+			-- Test 1
+			local data = {{real = 0.1, predicted = 0.1}, {real = 2, predicted = 2},}
+			local srt = "0.1, 0.1\n2, 2\n"
+			local fileName = "sad_test_file"
+			Persistence.SaveData(data, fileName)
+			local f = io.open(fileName, "r")
+			local retSrt = f:read("*a")
+			f:close()
+
+			assert.are.same(srt, retSrt)
+
+			-- Test 2
+			data = {{real = "0.1", predicted = "0.1"}, {real = "2", predicted = "2"},}
+			srt = "0.1, 0.1\n2, 2\n"
+			Persistence.SaveData(data, fileName)
+			f = io.open(fileName, "r")
+			retSrt = f:read("*a")
+			f:close()
+
+			assert.are.same(srt, retSrt)
+
+			-- Test 3
+			data = {{real = "class 1", predicted = "class 1"}, {real = "class 2", predicted = "class 2"},
+			{real = "class 3", predicted = "class 1"}, {real = "class 4", predicted = "class 2"},}
+			srt = "class 1, class 1\nclass 2, class 2\nclass 3, class 1\nclass 4, class 2\n"
+			Persistence.SaveData(data, fileName)
+			f = io.open(fileName, "r")
+			retSrt = f:read("*a")
+			f:close()
+
+			assert.are.same(srt, retSrt)
+
+			os.remove(fileName)
+
+		end)
+
+		it("> Tests the function SaveData with invalid arguments and throw the corresponding error", function() 
+
+			assert.has_error(function () Persistence.SaveData("invalid argument", 1) end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Persistence.SaveData(1, "valid argument") end, Saderrors.messages["INV_ARG_TAB"])
+			assert.has_error(function () Persistence.SaveData({}, 1) end, Saderrors.messages["INV_ARG_SRT"])
+			assert.has_error(function () Persistence.SaveData({}, {}) end, Saderrors.messages["INV_ARG_SRT"])
+			assert.has_error(function () Persistence.SaveData() end, Saderrors.messages["INV_ARG_TAB"])
 
 		end)
 	end)
