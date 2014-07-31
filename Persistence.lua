@@ -55,13 +55,16 @@ function SaveData ( data, fileName )
 
 	for k, v in pairs(data) do
 
-		if type(v) == "table" and v.real ~= nil and v.predicted ~=nil then
+		if type(v) == "table" and v.real ~= nil then
 
-			io.write(string.format("%s, %s\n", tostring(v.real), tostring(v.predicted)))
+			if v.predicted ~= nil then io.write(string.format("%s, %s\n", tostring(v.real), tostring(v.predicted)))
+			else io.write(string.format("%s, nil\n", tostring(v.real))) end
 
 		else
 
-			io.output():close(); io.output(temp)
+			io.output():close()
+			io.output(temp)
+			os.remove(tostring(fileName))
 			error(Saderrors.messages["INV_DATA_FOR_STAT"])
 
 		end

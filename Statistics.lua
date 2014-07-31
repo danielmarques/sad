@@ -25,7 +25,7 @@ function Correctness( data )
 
 	for k, v in pairs(data) do
 
-		if type(v) == "table" and v.real ~= nil and v.predicted ~=nil then
+		if type(v) == "table" and v.real ~= nil then
 
 			if v.real == v.predicted then correct = correct + 1 else incorrect = incorrect + 1 end
 
@@ -47,10 +47,18 @@ function MeanAbsError( data )
 
 	for k, v in pairs(data) do
 
-		if type(v) == "table" and v.real ~= nil and type(v.real) == "number" and v.predicted ~=nil and type(v.predicted) == "number" then
+		if type(v) == "table" and v.real ~= nil and type(v.real) == "number" then
 
-			sum = sum + math.abs(v.predicted - v.real)
-			count = count + 1
+			if v.predicted ~=nil then
+
+				if type(v.predicted) == "number" then
+
+					sum = sum + math.abs(v.predicted - v.real)
+					count = count + 1
+
+				else error(Saderrors.messages["INV_DATA_FOR_STAT_NUM"]) end
+
+			end
 
 		else error(Saderrors.messages["INV_DATA_FOR_STAT_NUM"]) end
 
@@ -70,10 +78,18 @@ function RootMeanSqrtError( data )
 
 	for k, v in pairs(data) do
 
-		if type(v) == "table" and v.real ~= nil and type(v.real) == "number" and v.predicted ~=nil and type(v.predicted) == "number" then
+		if type(v) == "table" and v.real ~= nil and type(v.real) == "number" then
 
-			sum = sum + (v.predicted - v.real)^2
-			count = count + 1
+			if v.predicted ~=nil then
+
+				if type(v.predicted) == "number" then
+
+					sum = sum + (v.predicted - v.real)^2
+					count = count + 1
+
+				else error(Saderrors.messages["INV_DATA_FOR_STAT_NUM"]) end
+
+			end
 
 		else error(Saderrors.messages["INV_DATA_FOR_STAT_NUM"]) end
 
