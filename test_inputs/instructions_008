@@ -1,0 +1,4 @@
+Entry{
+	data = "test_inputs/data_008",
+	strategy = "MeanAll",
+}

@@ -164,9 +164,9 @@ if ok then
 							end
 						end 
 
-						ok, msg = pcall(Persistence.SaveData, retData, "result_data_" .. experimentNum .. dateTime)
+						ok, msg = pcall(Persistence.SaveData, retData, "result_data_" .. experimentNum .. "-" .. dateTime)
 
-						if ok and verbose then print("Data saved on file: " .. "result_data_" .. experimentNum .. dateTime .. "\n")
+						if ok and verbose then print("Data saved on file: " .. "result_data_" .. experimentNum .. "-" .. dateTime .. "\n")
 
 						else if verbose then
 

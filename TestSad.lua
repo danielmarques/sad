@@ -18,6 +18,7 @@ local Dataentry = require "Dataentry"
 local Prediction = require "Prediction"
 local Statistics = require "Statistics"
 local Persistence = require "Persistence"
+local lfs = require "lfs"
 
 -- ################################################################################
 -- Unit tests for the data entry module.
@@ -26,7 +27,7 @@ describe("> #dataentry", function ()
 	-- LOAD INSTRUCTIONS TESTS
 	describe("> #loadexperiments", function()
 
-		it("> Loads file instructions_001 and checks its content", function()
+		it("> Loads the file instructions_001 and checks its content", function()
 
 			local instFilePath = "test_inputs/instructions_001"
 			local experiments = Dataentry.LoadExperiments(instFilePath)
@@ -51,7 +52,7 @@ describe("> #dataentry", function ()
 				
 		end)
 
-		it("> Loads file instructions_002 and checks its content", function()
+		it("> Loads the file instructions_002 and checks its content", function()
 
 			local instFilePath = "test_inputs/instructions_002"
 			local experiments = Dataentry.LoadExperiments(instFilePath)
@@ -76,7 +77,7 @@ describe("> #dataentry", function ()
 				
 		end)
 
-		it("> Loads file instructions_003 and checks its content", function()
+		it("> Loads the file instructions_003 and checks its content", function()
 
 			local instFilePath = "test_inputs/instructions_003"
 			local experiments = Dataentry.LoadExperiments(instFilePath)
@@ -101,7 +102,7 @@ describe("> #dataentry", function ()
 				
 		end)
 
-		it("> Loads file instructions_004 and checks its content", function()
+		it("> Loads the file instructions_004 and checks its content", function()
 
 			local instFilePath = "test_inputs/instructions_004"
 			local experiments = Dataentry.LoadExperiments(instFilePath)
@@ -126,26 +127,26 @@ describe("> #dataentry", function ()
 				
 		end)
 
-		it("> Loads file instructions_005 with invalid format and and throw the correct error", function()
+		it("> Loads the file instructions_005 with invalid format and and throw the correct error", function()
 
 			assert.has_error(function () Dataentry.LoadExperiments("test_inputs/instructions_005") end, Saderrors.messages["INV_INST"])
 				
 		end)
 
-		it("> Loads file instructions_006 with invalid format and and throw the correct error", function()
+		it("> Loads the file instructions_006 with invalid format and and throw the correct error", function()
 
 			assert.has_error(function () Dataentry.LoadExperiments("test_inputs/instructions_006") end, Saderrors.messages["INV_INST"])
 				
 		end)
 
-		it("> Uses an invalid argument and throw the correct error", function ()
+		it("> Uses invalid arguments and throw the correct error", function ()
 
 			assert.has_error(function () Dataentry.LoadExperiments({}) end, Saderrors.messages["INV_ARG_SRT"])
 			assert.has_error(function () Dataentry.LoadExperiments(1) end, Saderrors.messages["INV_ARG_SRT"])
 
 		end)
 
-		it("> Opens an inexistent file and throw the correct error", function()
+		it("> Opens inexistent files and throw the correct error", function()
 
 			assert.has_error(function () Dataentry.LoadExperiments("inexistent_file") end, Saderrors.messages["INV_INST"])
 			assert.has_error(function () Dataentry.LoadExperiments("") end, Saderrors.messages["INV_INST"])
@@ -157,7 +158,7 @@ describe("> #dataentry", function ()
 	-- LOAD DATA TESTS
 	describe("> #loaddata", function() 
 
-		it("> Loads the file data_000 and checks its content", function()
+		it("> Loads the valid file data_000 and checks its content", function()
 
 			local dataFilePath = "test_inputs/data_000"
 			local data = Dataentry.LoadData(dataFilePath)
@@ -180,7 +181,7 @@ describe("> #dataentry", function ()
 
 		end)
 
-		it("> Loads the file data_001 and checks its content", function()
+		it("> Loads the valid file data_001 nd checks its content", function()
 
 			local dataFilePath = "test_inputs/data_001"
 			local data = Dataentry.LoadData(dataFilePath)
@@ -203,7 +204,7 @@ describe("> #dataentry", function ()
 
 		end)
 
-		it("> Loads the file data_002 and checks its content", function()
+		it("> Loads the valid data_002 file and checks its content", function()
 
 			local dataFilePath = "test_inputs/data_002"
 			local data = Dataentry.LoadData(dataFilePath)
@@ -226,7 +227,7 @@ describe("> #dataentry", function ()
 
 		end)
 
-		it("> Loads the file data_003 and checks its content", function()
+		it("> Loads the valid file data_003 and checks its content", function()
 
 			local dataFilePath = "test_inputs/data_003"
 			local data = Dataentry.LoadData(dataFilePath)
@@ -249,7 +250,7 @@ describe("> #dataentry", function ()
 
 		end)
 
-		it("> Loads the file data_004 and checks its content", function()
+		it("> Loads the valid file data_004 and checks its content", function()
 
 			local dataFilePath = "test_inputs/data_004"
 			local data = Dataentry.LoadData(dataFilePath)
@@ -271,7 +272,7 @@ describe("> #dataentry", function ()
 
 		end)
 
-		it("> Loads the file data_005 and checks its content", function()
+		it("> Loads the valid file data_005 and checks its content", function()
 
 			local dataFilePath = "test_inputs/data_005"
 			local data = Dataentry.LoadData(dataFilePath)
@@ -293,20 +294,20 @@ describe("> #dataentry", function ()
 
 		end)
 
-		it("> Loads file data_006 with invalid format and and throw the correct error", function()
+		it("> Loads the file data_006 with invalid format and throw the correct error", function()
 
 			assert.has_error(function () Dataentry.LoadData("test_inputs/data_006") end, Saderrors.messages["INV_DATA"])
 				
 		end)
 
-		it("> Uses an invalid argument and throw the correct error", function ()
+		it("> Uses invalid arguments and throw the correct error", function ()
 
 			assert.has_error(function () Dataentry.LoadData({}) end, Saderrors.messages["INV_ARG_SRT"])
 			assert.has_error(function () Dataentry.LoadData(1) end, Saderrors.messages["INV_ARG_SRT"])
 
 		end)
 
-		it("> Opens an inexistent file and throw the correct error", function()
+		it("> Opens inexistent files and throw the correct error", function()
 
 			assert.has_error(function () Dataentry.LoadData("inexistent_file") end, Saderrors.messages["INV_DATA"])
 			assert.has_error(function () Dataentry.LoadData("") end, Saderrors.messages["INV_DATA"])
@@ -388,7 +389,7 @@ describe("> #prediction", function()
 
 	-- STRATEGY: MEAN ALL
 	describe("> #meanall", function()
-		it("> Tests the strategy MeanAll with a valid input", function() 
+		it("> Tests the strategy MeanAll with a valid input 1", function() 
 
 			local data = {{real = 1.1},{real = 2.2},{real = 3.3},{real = 4.4},{real = 5.5},}
 
@@ -519,7 +520,7 @@ describe("> #prediction", function()
 
 	-- STRATEGY: MORE NUMEROUS ALL
 	describe("> #morenumerousall", function()
-		it("> Tests the strategy MoreNumerousAll with a valid input", function() 
+		it("> Tests the strategy MoreNumerousAll with a valid input 1", function() 
 
 			local data = {{real = "a"},{real = "b"},{real = "b"},{real = "c"},{real = "d"},}
 
@@ -572,7 +573,7 @@ describe("> #prediction", function()
 
 	-- STRATEGY: MORE NUMEROUS P
 	describe("> #morenumerousp", function()
-		it("> Tests the strategy MoreNumerousP with a valid input", function() 
+		it("> Tests the strategy MoreNumerousP with a valid input 1", function() 
 
 			local data = {{real = "a"},{real = "b"},{real = "b"},{real = "c"},{real = "d"},{real = "a"},{real = "b"},{real = "b"},
 			{real = "c"},{real = "d"},}
@@ -647,9 +648,9 @@ describe("> #prediction", function()
 	end)
 
 	-- OTHER
-	describe("> #other", function() 
+	describe("> #auxiliary", function() 
 
-		it("> Tests if it is an array", function() 
+		it("> Tests if the input tables are arrays", function() 
 
 			a = {1,2,3,4,5}
 			assert.True(Prediction.IsArray(a))
@@ -681,7 +682,7 @@ describe("> #statistics", function()
 	--FUNCTION: CORRECTINESS
 	describe("> #correctness", function()
 
-		it("> Tests with a valid input.", function()
+		it("> Tests the function Correctness with valid inputs", function()
 
 			local data = {{real = 0.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 3}, {real = 4, predicted = 4}, {real = 5, predicted = 5},
 			{real = 6, predicted = 6}, {real = 7, predicted = 7}, {real = 8, predicted = 8}, {real = 9, predicted = 9}, {real = 10000, predicted = 10000},}
@@ -745,7 +746,7 @@ describe("> #statistics", function()
 	--FUNCTION: MEAN ABSOLUTE ERROR
 	describe("> #meanabserror", function()
 
-		it("> Tests with a valid input.", function()
+		it("> Tests the fucntion MeanAbsError with valid inputs", function()
 
 			-- Test 1
 			local data = {{real = 0.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 3}, {real = 4, predicted = 4}, {real = 5, predicted = 5},
@@ -811,7 +812,7 @@ describe("> #statistics", function()
 	--FUNCTION: ROOT MEAN SQUARED ERROR
 	describe("> #rootmeansqrterror", function()
 
-		it("> Tests with a valid input.", function()
+		it("> Tests the function RootMeanSqrtError with a valid inputs", function()
 
 			-- Test 1
 			local data = {{real = 0.1, predicted = 0.1}, {real = 2, predicted = 2}, {real = 3, predicted = 3}, {real = 4, predicted = 4}, {real = 5, predicted = 5},
@@ -881,7 +882,7 @@ describe("> #persistence", function()
 	-- SAVE STRING
 	describe("> #savestring", function()
 
-		it("> Saves a string into a file and checks the content.", function()
+		it("> Uses the function SaveString to saves strings into a files and checks the contents", function()
 
 			-- Test 1
 			local srt = "A short string."
@@ -928,7 +929,7 @@ describe("> #persistence", function()
 	-- SAVE DATA
 	describe("> #savedata", function()
 
-		it("> Saves a table data into a file and checks the content.", function()
+		it("> Uses the function SaveData to save tables with data into files and checks the contents", function()
 
 			-- Test 1
 			local data = {{real = 0.1, predicted = 0.1}, {real = 2, predicted = 2},}
@@ -993,17 +994,115 @@ end)
 
 describe("> #sad", function()
 
-	it("Tests the main program with valid inputs.", function()
+	it("> #Tests the main program with valid inputs.", function()
 
-		args = {"-d", "-i", " test_inputs/instructions_007"}
+		local resultFileName
 
-		local sad = assert(loadfile("sad.lua"))({"-d", "-i", " test_inputs/instructions_007"})
+		-- TEST 1
+		_ENV.arg = {"-s", "-i", "test_inputs/instructions_007"}		
+		local sad = loadfile("sad.lua", "t", _ENV)
+		sad()
 
-		local ok, msg = pcall(sad, {"-d", "-i", " test_inputs/instructions_007"})
-		print(msg)
-		--assert.are.same(ok, true)
+		-- Find and tests the statistics file
+		for file in lfs.dir(".") do
 
+			if file:find("result_s") then resultFileName = file; break end
 
+		end
+
+		local f = io.open(resultFileName, "r")
+		local resultContent = f:read("*a")
+		f:close()
+		os.execute("rm result_s*")
+
+		local expectedContent = [[Percenual of correctiness: 0 %
+Number of correct instances: 0
+Number of incorrect instances: 10
+Total number of instances: 10
+Mean Absolute Error: 1
+Root Mean Squared Error: 1
+]]
+		assert.are.same(expectedContent, resultContent)
+
+		-- Find and tests the data file
+		for file in lfs.dir(".") do
+
+			if file:find("result_d") then resultFileName = file; break end
+
+		end
+
+		f = io.open(resultFileName, "r")
+		resultContent = f:read("*a")
+		f:close()
+		os.execute("rm result_d*")
+
+		expectedContent = [[1, nil
+2, 1
+3, 2
+4, 3
+5, 4
+6, 5
+7, 6
+8, 7
+9, 8
+10, 9
+]]
+
+		assert.are.same(expectedContent, resultContent)
+
+		-- TEST 2
+		_ENV.arg = {"-s", "-i", "test_inputs/instructions_008"}		
+		sad = loadfile("sad.lua", "t", _ENV)
+		sad()
+
+		-- Find and tests the statistics file
+		for file in lfs.dir(".") do
+
+			if file:find("result_s") then resultFileName = file; break end
+
+		end
+
+		f = io.open(resultFileName, "r")
+		resultContent = f:read("*a")
+		f:close()
+		os.execute("rm result_s*")
+
+		expectedContent = [[Percenual of correctiness: 33.333333333333 %
+Number of correct instances: 4
+Number of incorrect instances: 8
+Total number of instances: 12
+Mean Absolute Error: 1.3333333333333
+Root Mean Squared Error: 1.6329931618555
+]]
+		assert.are.same(expectedContent, resultContent)
+
+		-- Find and tests the data file
+		for file in lfs.dir(".") do
+
+			if file:find("result_d") then resultFileName = file; break end
+
+		end
+
+		f = io.open(resultFileName, "r")
+		resultContent = f:read("*a")
+		f:close()
+		os.execute("rm result_d*")
+
+		expectedContent = [[10, 10
+10, 10
+10, 10
+10, 10
+8, 10
+8, 10
+8, 10
+8, 10
+12, 10
+12, 10
+12, 10
+12, 10
+]]
+
+		assert.are.same(expectedContent, resultContent)
 
 	end)
 end)
