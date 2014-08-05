@@ -13,6 +13,7 @@ Description: Module that defines the error messages.
 ################################################################################
 --]]
 
+-- Error messages of the sistem
 local messages = {
 
 	MISS_DATA = "Missing data path.",

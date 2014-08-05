@@ -10,8 +10,23 @@ File: TestSad.lua
 Title: SAD tests
 Description: Unit tests for all modules of the sistem.
 
+IMPORTANT: 
+
+1 - The folder test_inputs, along with all inputs designed for the unit tests, is 
+required in order to run all the following tests.
+
+2 - The library lfs is also required to run the tests. You can download and install
+this library via LuaRocks.
+
+3 - A linux enviroment is required to run all tests below #sad.
+
+4 - In order to run all the tests below #sad it is necessary to clear ALL RESULT 
+FILES from previous executions of SAD.
+
 ################################################################################
 --]]
+
+-- Modules
 
 local Saderrors = require "Saderrors"
 local Dataentry = require "Dataentry"
